@@ -5,6 +5,7 @@ function AddBook() {
   const [author, setAuthor] = useState('');
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
+ 
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
@@ -20,6 +21,10 @@ function AddBook() {
 
   const handlePriceChange = (event) => {
     setPrice(event.target.value);
+  };
+
+  const handleCancel = () => {
+    window.location.href = '/';
   };
 
   const handleSubmit = async (event) => {
@@ -104,6 +109,9 @@ function AddBook() {
         <button type="submit" className="btn btn-primary">
           Add Book
         </button>
+        <button type="button" onClick={handleCancel} className="btn btn-danger">
+            Cancel
+          </button>
       </form>
     </div>
   );

@@ -1,10 +1,12 @@
 
 import React, { useEffect, useState } from 'react';
 import AddBook from './AddBook';
-
+import EditBook from './EditBook';
 function App() {
   const [books, setBooks] = useState([]);
   const [showAddBookForm, setShowAddBookForm] = useState(false);
+  const [showEditBookForm, setShowEditBookForm] = useState(false);
+  const [selectedBookId, setSelectedBookId] = useState(null);
 
   useEffect(() => {
     fetchBooks();
@@ -26,18 +28,34 @@ function App() {
   // };
   const handleEditBook = (bookId) => {
     // Handle logic to edit a book
-    console.log('Edit Book:', bookId);
+    setShowEditBookForm(true);
+    setSelectedBookId(bookId);
+    //console.log('Edit Book:', bookId);
+  };
+  const handleDeleteBook = async (bookId) => {
+    try {
+      const response = await fetch(`http://localhost:4500/books/${bookId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        // Deletion was successful, fetch updated book list
+        fetchBooks();
+      } else {
+        console.log('Deletion failed');
+      }
+    } catch (error) {
+      console.log('Error:', error);
+    }
   };
 
-  const handleDeleteBook = (bookId) => {
-    // Handle logic to delete a book
-    console.log('Delete Book:', bookId);
-  };
+  // const handleDeleteBook = (bookId) => {
+  //   // Handle logic to delete a book
+  //   console.log('Delete Book:', bookId);
+  // };
   
   const handleAddBook = () => {
     setShowAddBookForm(true);
   };
-
   return (
     <div className="container">
       <h1 className="mt-4">Bookstore</h1>
@@ -48,6 +66,8 @@ function App() {
       )}
       {showAddBookForm ? (
         <AddBook />
+      ) : showEditBookForm ? (
+        <EditBook bookId={selectedBookId} />
       ) : (
         <div>
           <h2 className="mt-4">All Books</h2>
@@ -91,6 +111,5 @@ function App() {
     </div>
   );
 }
-
 
 export default App;

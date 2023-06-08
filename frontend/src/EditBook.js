@@ -1,38 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 
-function EditBook({ match }) {
+const EditBook = ({ bookId }) => {
   const [book, setBook] = useState({});
-  const history = useHistory();
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
 
   useEffect(() => {
-    fetchBook(match.params.id);
-  }, [match.params.id]);
+    fetchBook();
+  }, []);
 
-  const fetchBook = async (id) => {
+  const fetchBook = async () => {
     try {
-      const response = await fetch(`http://localhost:4500/books/${id}`);
+      const response = await fetch(`http://localhost:4500/books/${bookId}`);
       const data = await response.json();
       setBook(data);
+      setTitle(data.title);
+      setAuthor(data.author);
+      setDescription(data.description);
+      setPrice(data.price);
     } catch (error) {
       console.log('Error:', error);
     }
   };
 
+  const handleCancel = () => {
+    window.location.href = '/';
+  };
+
+
   const handleUpdate = async () => {
     try {
-      const response = await fetch(`http://localhost:4500/books/${book._id}`, {
+      const response = await fetch(`http://localhost:4500/books/${bookId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(book),
+        body: JSON.stringify({ title, author, description, price }),
       });
       if (response.ok) {
-        console.log('Book updated successfully');
-        history.push('/'); // Redirect to the main page after update
+        // Update was successful, redirect to main page
+        window.location.href = '/';
       } else {
-        console.log('Failed to update book');
+        console.log('Update failed');
       }
     } catch (error) {
       console.log('Error:', error);
@@ -40,54 +51,54 @@ function EditBook({ match }) {
   };
 
   return (
-    <div className="container">
-      <h1>Edit Book</h1>
+    <div>
+      <h2>Edit Book</h2>
       <form>
         <div className="form-group">
-          <label htmlFor="title">Title</label>
+          <label>Title</label>
           <input
             type="text"
             className="form-control"
-            id="title"
-            value={book.title || ''}
-            onChange={(e) => setBook({ ...book, title: e.target.value })}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
         </div>
         <div className="form-group">
-          <label htmlFor="author">Author</label>
+          <label>Author</label>
           <input
             type="text"
             className="form-control"
-            id="author"
-            value={book.author || ''}
-            onChange={(e) => setBook({ ...book, author: e.target.value })}
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
           />
         </div>
         <div className="form-group">
-          <label htmlFor="description">Description</label>
+          <label>Description</label>
           <textarea
             className="form-control"
-            id="description"
-            value={book.description || ''}
-            onChange={(e) => setBook({ ...book, description: e.target.value })}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
           ></textarea>
         </div>
         <div className="form-group">
-          <label htmlFor="price">Price</label>
+          <label>Price</label>
           <input
-            type="number"
+            type="text"
             className="form-control"
-            id="price"
-            value={book.price || ''}
-            onChange={(e) => setBook({ ...book, price: e.target.value })}
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
           />
         </div>
         <button type="button" className="btn btn-primary" onClick={handleUpdate}>
           Update
         </button>
+        <button type="button" onClick={handleCancel} className="btn btn-danger">
+            Cancel
+          </button>
+
       </form>
     </div>
   );
-}
+};
 
 export default EditBook;
