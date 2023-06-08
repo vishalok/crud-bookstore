@@ -13,7 +13,7 @@ let connectionString = DB_PROD_URL;
 if(process.env.NODE_ENV !== 'production'){
     connectionString = DB_URL;
 }
-
+//middlewares
 app.use(bodyParser.json());
 
 
